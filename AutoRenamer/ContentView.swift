@@ -1,24 +1,90 @@
-//
-//  ContentView.swift
-//  AutoRenamer
-//
-//  Created by Zellux Wang on 2/10/26.
-//
-
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @StateObject private var viewModel = RenameViewModel()
+    @State private var isDropTargeted = false
 
-#Preview {
-    ContentView()
+    var body: some View {
+        VStack(spacing: 0) {
+            // Template field
+            HStack {
+                Text("Template:")
+                    .font(.headline)
+                TextField("e.g. {date}_{topic}_{author}.pdf", text: $viewModel.templateString)
+                    .textFieldStyle(.roundedBorder)
+            }
+            .padding()
+
+            Divider()
+
+            // Main content area
+            if viewModel.hasFiles {
+                FileListView(files: $viewModel.files)
+                    .overlay {
+                        FileDropOverlay(onDrop: { urls in
+                            viewModel.addFiles(urls: urls)
+                        }, isTargeted: $isDropTargeted)
+                    }
+            } else {
+                DropZoneView(isTargeted: $isDropTargeted) { urls in
+                    viewModel.addFiles(urls: urls)
+                }
+                .padding()
+            }
+
+            // Error message
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundStyle(.red)
+                    .font(.caption)
+                    .padding(.horizontal)
+                    .padding(.bottom, 4)
+            }
+
+            Divider()
+
+            // Action buttons
+            HStack {
+                Picker("Provider", selection: $viewModel.selectedProvider) {
+                    ForEach(LLMProvider.allCases) { provider in
+                        Text(provider.displayName).tag(provider)
+                    }
+                }
+                .frame(width: 160)
+
+                Spacer()
+
+                if viewModel.totalTokenUsage.total > 0 {
+                    Text("Tokens: \(viewModel.totalTokenUsage.total)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .help("Input: \(viewModel.totalTokenUsage.input), Output: \(viewModel.totalTokenUsage.output)")
+                }
+
+                if viewModel.isProcessing {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                        .padding(.trailing, 4)
+                }
+
+                Button("Clear") {
+                    viewModel.clearFiles()
+                }
+                .disabled(viewModel.files.isEmpty)
+
+                Button("Analyze") {
+                    Task { await viewModel.processFiles() }
+                }
+                .disabled(viewModel.files.isEmpty || viewModel.isProcessing)
+
+                Button("Rename") {
+                    Task { await viewModel.confirmRename() }
+                }
+                .disabled(!viewModel.hasReadyFiles || viewModel.isProcessing)
+                .buttonStyle(.borderedProminent)
+            }
+            .padding()
+        }
+        .frame(minWidth: 600, minHeight: 400)
+    }
 }
