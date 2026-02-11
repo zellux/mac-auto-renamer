@@ -2,6 +2,8 @@
 
 A macOS app that uses LLMs to automatically rename files based on their content.
 
+**Website:** https://zellux.github.io/mac-auto-renamer/
+
 ![screenshot](screenshot.png)
 
 ## How It Works
