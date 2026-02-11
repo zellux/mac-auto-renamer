@@ -2,6 +2,8 @@
 
 A macOS app that uses LLMs to automatically rename files based on their content.
 
+![screenshot](screenshot.png)
+
 ## How It Works
 
 1. **Set up an API key** — Open Settings (Cmd+,) and enter your OpenAI or Anthropic API key.
