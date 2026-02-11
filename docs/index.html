@@ -52,11 +52,20 @@
     }
 
     nav .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-size: 18px;
       font-weight: 600;
       color: var(--text);
       text-decoration: none;
       letter-spacing: -0.3px;
+    }
+
+    nav .brand img {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
     }
 
     nav .nav-link {
@@ -94,6 +103,15 @@
       height: 800px;
       background: radial-gradient(circle, rgba(0, 113, 227, 0.08) 0%, transparent 70%);
       pointer-events: none;
+    }
+
+    .hero-icon {
+      display: block;
+      margin: 0 auto 28px;
+      width: 96px;
+      height: 96px;
+      border-radius: 22px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
     }
 
     .hero-badge {
@@ -270,6 +288,7 @@
       position: relative;
       border: 1px solid rgba(0, 0, 0, 0.04);
       transition: all 0.3s ease;
+      overflow: hidden;
     }
 
     .step:hover {
@@ -295,14 +314,14 @@
 
     .step-number {
       position: absolute;
-      top: 16px;
-      right: 20px;
-      font-size: 13px;
-      font-weight: 700;
-      color: rgba(0, 0, 0, 0.08);
+      top: -8px;
+      right: 8px;
+      font-weight: 800;
+      color: rgba(0, 0, 0, 0.05);
       font-variant-numeric: tabular-nums;
-      font-size: 48px;
+      font-size: 64px;
       line-height: 1;
+      pointer-events: none;
     }
 
     .step h3 {
@@ -477,16 +496,16 @@
 
     /* ── Subtle entrance animations ── */
     @media (prefers-reduced-motion: no-preference) {
-      .hero h1, .hero .tagline, .hero-badge, .hero-buttons {
+      .hero-icon, .hero h1, .hero .tagline, .hero-buttons {
         animation: fadeUp 0.7s ease both;
       }
-      .hero-badge { animation-delay: 0s; }
+      .hero-icon { animation-delay: 0s; }
       .hero h1 { animation-delay: 0.1s; }
       .hero .tagline { animation-delay: 0.2s; }
       .hero-buttons { animation-delay: 0.3s; }
 
       .screenshot-section img {
-        animation: fadeUp 0.8s ease 0.4s both;
+        animation: fadeUp 0.8s ease 0.5s both;
       }
     }
 
@@ -507,14 +526,14 @@
   <!-- Nav -->
   <nav>
     <div class="nav-inner">
-      <a href="#" class="brand">AutoRenamer</a>
+      <a href="#" class="brand"><img src="icon.png" alt="AutoRenamer icon">AutoRenamer</a>
       <a href="https://github.com/zellux/mac-auto-renamer" class="nav-link">GitHub</a>
     </div>
   </nav>
 
   <!-- Hero -->
   <section class="hero">
-    <div class="hero-badge">Free &amp; Open Source</div>
+    <img src="icon.png" alt="AutoRenamer icon" class="hero-icon">
     <h1>Rename files<br>intelligently with AI</h1>
     <p class="tagline">Drop your files, define a template, and let AI analyze the content to generate meaningful names.</p>
     <div class="hero-buttons">
