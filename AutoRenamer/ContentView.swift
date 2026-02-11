@@ -3,6 +3,28 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var viewModel = RenameViewModel()
     @State private var isDropTargeted = false
+    @AppStorage("customTemplates") private var customTemplatesData: Data = Data()
+
+    private var customTemplates: [String] {
+        (try? JSONDecoder().decode([String].self, from: customTemplatesData)) ?? []
+    }
+
+    private func saveCustomTemplate(_ template: String) {
+        var templates = customTemplates
+        guard !template.isEmpty, !templates.contains(template) else { return }
+        templates.append(template)
+        if let data = try? JSONEncoder().encode(templates) {
+            customTemplatesData = data
+        }
+    }
+
+    private func removeCustomTemplate(_ template: String) {
+        var templates = customTemplates
+        templates.removeAll { $0 == template }
+        if let data = try? JSONEncoder().encode(templates) {
+            customTemplatesData = data
+        }
+    }
 
     private func hasAPIKey(_ provider: LLMProvider) -> Bool {
         let key = KeychainHelper.load(key: provider.keychainKey)
@@ -32,6 +54,30 @@ struct ContentView: View {
                         Button("{date}_{location}_{subject}.{ext}") { viewModel.templateString = "{date}_{location}_{subject}.{ext}" }
                         Button("{date}_{event}.{ext}") { viewModel.templateString = "{date}_{event}.{ext}" }
                     }
+                    if !customTemplates.isEmpty {
+                        Section("Custom") {
+                            ForEach(customTemplates, id: \.self) { template in
+                                Button {
+                                    viewModel.templateString = template
+                                } label: {
+                                    Text(template)
+                                }
+                            }
+                            Divider()
+                            Menu("Remove...") {
+                                ForEach(customTemplates, id: \.self) { template in
+                                    Button(template, role: .destructive) {
+                                        removeCustomTemplate(template)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Divider()
+                    Button("Save Current Template") {
+                        saveCustomTemplate(viewModel.templateString)
+                    }
+                    .disabled(viewModel.templateString.isEmpty)
                 } label: {
                     Image(systemName: "list.bullet")
                 }
