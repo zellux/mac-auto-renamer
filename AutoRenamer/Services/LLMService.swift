@@ -27,6 +27,7 @@ enum LLMServiceError: LocalizedError {
 
 struct OpenAIService: LLMService {
     let apiKey: String
+    let model: String
 
     nonisolated func analyzeFile(content: FileContent, template: RenameTemplate, fileName: String) async throws -> AnalysisResult {
         let url = URL(string: "https://api.openai.com/v1/chat/completions")!
@@ -40,7 +41,7 @@ struct OpenAIService: LLMService {
         let messages = buildOpenAIMessages(prompt: prompt, content: content)
 
         let body: [String: Any] = [
-            "model": "gpt-4o",
+            "model": model,
             "messages": messages,
             "temperature": 0.1,
         ]
@@ -110,6 +111,7 @@ struct OpenAIService: LLMService {
 
 struct AnthropicService: LLMService {
     let apiKey: String
+    let model: String
 
     nonisolated func analyzeFile(content: FileContent, template: RenameTemplate, fileName: String) async throws -> AnalysisResult {
         let url = URL(string: "https://api.anthropic.com/v1/messages")!
@@ -124,7 +126,7 @@ struct AnthropicService: LLMService {
         let messageContent = buildAnthropicContent(prompt: prompt, content: content)
 
         let body: [String: Any] = [
-            "model": "claude-sonnet-4-20250514",
+            "model": model,
             "max_tokens": 1024,
             "messages": [
                 ["role": "user", "content": messageContent]

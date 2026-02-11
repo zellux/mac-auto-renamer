@@ -33,8 +33,10 @@ You can use any variable names — the LLM will interpret them based on the file
 
 ## Supported Providers
 
-- **OpenAI** — Uses GPT-4o
-- **Anthropic** — Uses Claude Sonnet
+- **OpenAI** — Defaults to GPT-4o
+- **Anthropic** — Defaults to Claude Sonnet
+
+You can override the model name in Settings (e.g. `gpt-4o-mini`, `claude-haiku-4-5-20250514`).
 
 ## Installation
 

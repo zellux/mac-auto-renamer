@@ -55,9 +55,12 @@ class RenameViewModel: ObservableObject {
             return
         }
 
+        let modelName = UserDefaults.standard.string(forKey: selectedProvider.modelKey)
+        let model = (modelName == nil || modelName!.isEmpty) ? selectedProvider.defaultModel : modelName!
+
         let service: any LLMService = switch selectedProvider {
-        case .openAI: OpenAIService(apiKey: apiKey)
-        case .anthropic: AnthropicService(apiKey: apiKey)
+        case .openAI: OpenAIService(apiKey: apiKey, model: model)
+        case .anthropic: AnthropicService(apiKey: apiKey, model: model)
         }
 
         isProcessing = true

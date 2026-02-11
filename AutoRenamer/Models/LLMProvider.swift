@@ -20,6 +20,20 @@ enum LLMProvider: String, CaseIterable, Identifiable, Codable {
         }
     }
 
+    var defaultModel: String {
+        switch self {
+        case .openAI: "gpt-4o"
+        case .anthropic: "claude-sonnet-4-20250514"
+        }
+    }
+
+    var modelKey: String {
+        switch self {
+        case .openAI: "openai_model"
+        case .anthropic: "anthropic_model"
+        }
+    }
+
     var keychainKey: String {
         switch self {
         case .openAI: "openai_api_key"
