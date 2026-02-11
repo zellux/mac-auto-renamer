@@ -4,6 +4,11 @@ struct ContentView: View {
     @StateObject private var viewModel = RenameViewModel()
     @State private var isDropTargeted = false
 
+    private func hasAPIKey(_ provider: LLMProvider) -> Bool {
+        let key = KeychainHelper.load(key: provider.keychainKey)
+        return key != nil && !key!.isEmpty
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // Template field
@@ -47,10 +52,20 @@ struct ContentView: View {
             HStack {
                 Picker("Provider", selection: $viewModel.selectedProvider) {
                     ForEach(LLMProvider.allCases) { provider in
-                        Text(provider.displayName).tag(provider)
+                        if hasAPIKey(provider) {
+                            Text(provider.displayName).tag(provider)
+                        } else {
+                            Text("\(provider.displayName) (no key)").tag(provider)
+                        }
                     }
                 }
-                .frame(width: 160)
+                .frame(width: 200)
+
+                if !hasAPIKey(viewModel.selectedProvider) {
+                    Text("Set API key in Settings (⌘,)")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
 
                 Spacer()
 
@@ -75,7 +90,7 @@ struct ContentView: View {
                 Button("Analyze") {
                     Task { await viewModel.processFiles() }
                 }
-                .disabled(viewModel.files.isEmpty || viewModel.isProcessing)
+                .disabled(viewModel.files.isEmpty || viewModel.isProcessing || !hasAPIKey(viewModel.selectedProvider))
 
                 Button("Rename") {
                     Task { await viewModel.confirmRename() }
