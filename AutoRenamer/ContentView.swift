@@ -17,6 +17,26 @@ struct ContentView: View {
                     .font(.headline)
                 TextField("e.g. {date}_{topic}_{author}.pdf", text: $viewModel.templateString)
                     .textFieldStyle(.roundedBorder)
+                Menu {
+                    Section("Documents") {
+                        Button("{date}_{topic}.{ext}") { viewModel.templateString = "{date}_{topic}.{ext}" }
+                        Button("{date}_{author}_{title}.{ext}") { viewModel.templateString = "{date}_{author}_{title}.{ext}" }
+                        Button("{category}_{title}.{ext}") { viewModel.templateString = "{category}_{title}.{ext}" }
+                    }
+                    Section("Receipts / Invoices") {
+                        Button("{date}_{vendor}_{amount}.{ext}") { viewModel.templateString = "{date}_{vendor}_{amount}.{ext}" }
+                        Button("{date}_{invoice_number}.{ext}") { viewModel.templateString = "{date}_{invoice_number}.{ext}" }
+                        Button("{date}_{vendor}_{project}.{ext}") { viewModel.templateString = "{date}_{vendor}_{project}.{ext}" }
+                    }
+                    Section("Photos") {
+                        Button("{date}_{location}_{subject}.{ext}") { viewModel.templateString = "{date}_{location}_{subject}.{ext}" }
+                        Button("{date}_{event}.{ext}") { viewModel.templateString = "{date}_{event}.{ext}" }
+                    }
+                } label: {
+                    Image(systemName: "list.bullet")
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
             }
             .padding()
 
